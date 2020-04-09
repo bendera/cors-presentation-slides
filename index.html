@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>CORS</title>
+
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/reveal.css" />
+    <link rel="stylesheet" href="css/theme/white.css" />
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css" />
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      link.href = window.location.search.match(/print-pdf/gi)
+        ? "css/print/pdf.css"
+        : "css/print/paper.css";
+      document.getElementsByTagName("head")[0].appendChild(link);
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h2>SOP - Same Origin Policy</h2>
+          <blockquote><p>The same-origin policy is a critical security mechanism that restricts how a document or script loaded from one origin can interact with a resource from another origin.</p></blockquote>
+        </section>
+        <section>
+          <h2>CORS - Cross-Origin Resource Sharing</h2>
+          <blockquote><p>Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell browsers to give a web application running at one origin, access to selected resources from a different origin.</p></blockquote>
+        </section>
+        <section>
+          <h2>What requests use CORS?</h2>
+          <ul>
+            <li>XMLHttpRequest, Fetch API</li>
+            <li>Web fonts</li>
+            <li>WebGL textures</li>
+            <li>Images/video frames drawn to a canvas using drawImage()</li>
+            <li>CSS shapes from images</li>
+          </ul>
+          <p><small>(For everything else, there's <del>MasterCard</del> <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP"><abbr title="Content security policy">CSP</abbr></a>)</small></p>
+        </section>
+        <section>
+          <h2>Same origin or not?</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>URL</th>
+                <th>Origin</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tr>
+              <td>http://store.company.com/dir2/other.html</td>
+              <td style="color: green;">Same</td>
+              <td>Only the path differs</td>
+            </tr>
+            <tr>
+              <td>http://store.company.com/dir/inner/another.html</td>
+              <td style="color: green;">Same</td>
+              <td>Only the path differs</td>
+            </tr>
+            <tr>
+              <td>https://store.company.com/page.html</td>
+              <td style="color: red;">Different</td>
+              <td>Different protocol</td>
+            </tr>
+            <tr>
+              <td>http://store.company.com:81/dir/page.html</td>
+              <td style="color: red;">Different</td>
+              <td>Different port</td>
+            </tr>
+            <tr>
+              <td>http://news.company.com/dir/page.html</td>
+              <td style="color: red;">Different</td>
+              <td>Different host</td>
+            </tr>
+          </table>
+        </section>
+        <section>
+          <div style="transform: scale(0.8);">
+            <h2>CORS headers</h2>
+            <div style="margin: 0 0 40px;">
+              <h3>Request Headers</h3>
+              <ul>
+                <li>Origin</li>
+                <li>Access-Control-Request-Method</li>
+                <li>Access-Control-Request-Headers</li>
+              </ul>
+            </div>
+            <div style="margin: 0 0 40px;">
+              <h3>Response headers</h3>
+              <ul>
+                <li>Access-Control-Allow-Origin</li>
+                <li>Access-Control-Allow-Credentials</li>
+                <li>Access-Control-Expose-Headers</li>
+                <li>Access-Control-Max-Age</li>
+                <li>Access-Control-Allow-Methods</li>
+                <li>Access-Control-Allow-Headers</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section>
+          <p>Demo: misconfigured-cors</p>
+        </section>
+        <section>
+          <p>Demo: no-cors</p>
+        </section>
+        <section>
+          <p>Demo: cors-cdn</p>
+        </section>
+        <section>
+          <p>Demo: cors-api</p>
+        </section>
+        <section>
+          <p>Demo: cors-api-fetch-credentials</p>
+        </section>
+        <section>
+          <p>Demo: working-example-urlencoded</p>
+        </section>
+        <section>
+          <section>
+            <h2>Access-Control-Allow-Origin (ACAO)</h2>
+            <ul>
+              <li>
+                Access-Control-Allow-Origin: * <i>(Without credentials)</i>
+              </li>
+              <li>
+                Access-Control-Allow-Origin: &lt;origin&gt;
+                <i>(Only a single origin can be specified)</i>
+              </li>
+              <li>
+                Access-Control-Allow-Origin: null <i>(Should not be use)</i>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>ACAO: multiple origins</h2>
+          </section>
+          <section>
+            <p>Origin list: <b style="color: red;">WON'T WORK!!!</b></p>
+<pre style="white-space: pre-wrap;"><code class="hljs apache" data-trim data-line-numbers>
+Header set Access-Control-Allow-Origin "https://example.com, https://anotherexample.com"
+</code></pre>
+          </section>
+          <section>
+            <p>Multiple headers: <b style="color: red;">WON'T WORK!!!</b></p>
+<pre><code class="hljs apache" data-trim data-line-numbers>
+Header set Access-Control-Allow-Origin "http://example.com"
+Header set Access-Control-Allow-Origin "https://example.com"
+Header set Access-Control-Allow-Origin "http://anotherexample.com"
+Header set Access-Control-Allow-Origin "https://anotherexample.com"
+</code></pre>
+          </section>
+          <section>
+            <p>Dynamic ACAO: whitelist</p>
+          </section>
+          <section>
+            <p>Demo: dynamic-whitelisted</p>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Misconfigurations</h2>
+          </section>
+          <section>
+            <h2>Reflected origin</h2>
+          </section>
+          <section>
+            <h2>Insufficient regular expression</h2>
+<pre><code class="hljs javascript" data-trim data-line-numbers>
+origin = request.getHeader("Origin");
+regex = "https:\/\/[a-z]+.example.com";
+if re.test(origin, regex) {
+  response.addHeader(origin);
+}
+</code></pre>
+            <p>
+              <span style="color: green;">https://asdf.example.com</span><br>
+              <span style="color: red;">https://asdfxexample.com</span>
+            </p>
+          </section>
+          <section>
+            <h2>Prefix check</h2>
+            <p>
+              <span style="color: green;">https://example.com</span><br>
+              <span style="color: red;">https://example.com.attacker.com</span>
+            </p>
+          </section>
+        </section>
+        <section>
+          <section><p>Demo: preflight-request</p></section>
+          <section>
+            <h2>Simple requests</h2>
+            <ul>
+              <li>GET, HEAD, POST</li>
+              <li>CORS-safelisted request-headers, e.g.: accept, accept-language, ...</li>
+              <li>
+                Content type is:
+                <ul>
+                  <li>application/x-www-form-urlencoded</li>
+                  <li>multipart/form-data</li>
+                  <li>text/plain</li>
+                </ul>
+              </li>
+              <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Simple_requests">Some other conditions</a></li>
+            </ul>
+          </section>
+        <section>
+          <p>Demo: custom-request-header</p>
+        </section>
+        <section>
+          <p>Demo: custom-response-header</p>
+        </section>
+        <section>
+          <p>Demo: custom-response-header-exposed</p>
+        </section>
+        <section>
+          <h2>Security</h2>
+          <h3>Articles</h3>
+          <p>
+            https://blog.detectify.com/2018/04/26/cors-misconfigurations-explained/
+            https://www.we45.com/blog/3-ways-to-exploit-misconfigured-cross-origin-resource-sharing-cors
+            https://www.corben.io/advanced-cors-techniques/
+          </p>
+          <h3>Tools</h3>
+          <p>
+            https://github.com/RUB-NDS/CORStest
+            https://github.com/lc/theftfuzzer
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        width: '90%',
+        height: '90%',
+        hash: true,
+        dependencies: [
+          { src: "plugin/markdown/marked.js" },
+          { src: "plugin/markdown/markdown.js" },
+          { src: "plugin/highlight/highlight.js" },
+          { src: "plugin/notes/notes.js", async: true }
+        ]
+      });
+    </script>
+  </body>
+</html>
